@@ -1,0 +1,43 @@
+{% extends 'users/base.html' %}
+{% load static %} 
+{% block page_title %}calendar{% endblock %}
+
+{% block title %}Calendar {% endblock title%}
+{% block content %}
+<head>
+    <title>Calendar</title>
+    <!-- Add Bootstrap CSS link here -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Calendar</h1>
+
+        <!-- Year Selector -->
+        {% comment %} <div class="form-group mt-3">
+            <label for="year">Select Year:</label>
+            <select class="form-control" id="year" onchange="changeYear()">
+                {% for year in range(2020, 2031) %}
+                    <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div> {% endcomment %}
+
+        <!-- Display Calendar -->
+        {{ calendar | safe }}
+    </div>
+
+    <!-- Add Bootstrap JS scripts here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript function to handle year change -->
+    <script>
+        function changeYear() {
+            var selectedYear = document.getElementById("year").value;
+            window.location.href = "/calendar/?year=" + selectedYear;
+        }
+    </script>
+</body>
+<{% endblock %}

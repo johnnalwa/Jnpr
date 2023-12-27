@@ -1,0 +1,33 @@
+{% extends 'member/base.html' %}
+{% load static %} 
+{% block page_title %} CLIENTS CONTACTS LIST {% endblock %}
+{% block title %} more{% endblock title%}
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Client List</h1>
+
+        <table class="table">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th style="width: 30%;">Phone Number</th>
+                    <th style="width: 40%;">Full Name</th>
+                    <th style="width: 30%;">Ministry</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in client_data %}
+                    <tr>
+                        <td>
+                            {{ client.phone_number }}
+                            <a href="tel:{{ client.phone_number }}">
+                                <i class="bx bx-phone"></i> <!-- Replace this with your preferred call icon -->
+                            </a>
+                        </td>
+                        <td>{{ client.client_fullname }}</td>
+                        <td>{{ client.ministry }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

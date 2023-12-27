@@ -1,0 +1,175 @@
+{% extends 'member/base.html' %}
+{% load static %} 
+{% block page_title %}Dashboard{% endblock %}
+
+{% block title %} Home Page {% endblock title%}
+{% block content %}
+    <!-- dashboard inner -->
+    <div class="midde_cont">
+        <div class="container-fluid">
+           
+           <div class="row column1">
+              <div class="col-md-6 col-lg-3">
+                 <div class="full counter_section margin_bottom_30">
+                    <div class="couter_icon">
+                       <div> 
+                          <i class="fa fa-user yellow_color"></i>
+                       </div>
+                    </div>
+                    <div class="counter_no">
+                       <div>
+                          <p class="total_no"> {{ total_clients|default:"0"  }}</p>
+                          <p class="head_couter">Total Clients </p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              <div class="col-md-6 col-lg-3">
+                    <div class="full counter_section margin_bottom_30">
+                       <div class="couter_icon">
+                             <div> 
+                                <i class="fa fa-money blue1_color"></i>
+                             </div>
+                       </div>
+                       <div class="counter_no">
+                        <div>
+                            <p class="total_no">KES {{ commission|default:"0.00" }}</p>
+                            <p class="head_couter">
+                               Commission update
+                            </p>
+                        </div>
+                    </div>
+                    
+                    </div>
+                 </div>
+
+                 <div class="col-md-6 col-lg-3">
+                 <div class="full counter_section margin_bottom_30">
+                    <div class="couter_icon">
+                          <div> 
+                             <i class="fa fa-chart-pie green_color"></i>
+                          </div>
+                    </div>
+                    <div class="counter_no">
+                          <div>
+                             <p class="total_no">25%</p>
+                             <p class="head_couter">Attendance</p>
+                          </div>
+                    </div>
+                 </div>
+              </div>
+
+              <div class="col-md-6 col-lg-3">
+                 <div class="full counter_section margin_bottom_30">
+                    <div class="couter_icon">
+                       <div> 
+                          <i class="fa fa-comments-o red_color"></i>
+                       </div>
+                    </div>
+                    <div class="counter_no">
+                       <div>
+                          <p class="total_no">54</p>
+                          <p class="head_couter">Comments</p>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+           
+           <!-- graph -->
+           <div class="row column2 graph margin_bottom_30">
+              <div class="col-md-l2 col-lg-12">
+                 <div class="white_shd full">
+                    <div class="full graph_head">
+                       <div class="heading1 margin_0">
+                          <h2>Agents Sales Chart</h2>
+                       </div>
+                    </div>
+                    <div class="full graph_head">
+                       <div class="row">
+                          <div class="col-md-12">
+                             <div class="content">
+                                <div class="area_chart">
+                                   <canvas height="120" id="canvas"></canvas>
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+           <!-- end graph -->
+           <div class="row column3">
+             
+              
+              <!-- progress bar -->
+             
+           </div>
+           <div class="row column4 graph">
+               <div class="col-md-6">
+                  <div class="dash_blog">
+                     <div class="dash_blog_inner">
+                        <div class="dash_head">
+                           <h3>
+                              <span><i class="fa fa-calendar"></i> Date {{ some_date }}</span>
+                              <span class="plus_green_bt"><a href="#">+</a></span>
+                           </h3>
+                        </div>
+                        <div class="list_cont">
+                           <p>Upcoming Marketing routes for {{ user.first_name.title|default:'Guest' }}</p>
+                        </div>
+                        <div class="task_list_main">
+                           <ul class="task_list">
+                              {% for route in user_routes %}
+                              <li>{{ route.date }} - {{ route.institution }} - {{ route.location }}</li>
+                              {% endfor %}
+                           </ul>
+                        </div>
+                        <div class="read_more">
+                           <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            
+       
+              <div class="col-md-6">
+                 <div class="dash_blog">
+                    <div class="dash_blog_inner">
+                       <div class="dash_head">
+                          <h3><span><i class="fa fa-comments-o"></i> Updates</span><span class="plus_green_bt"><a href="#">+</a></span></h3>
+                       </div>
+                       <div class="list_cont">
+                          <p>Latest Updates</p>
+                       </div>
+                       <div class="msg_list_main">
+                          <ul class="msg_list">
+                             <li>
+                                <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span>
+                                <span>
+                                <span class="name_user">Admin</span>
+                                <span class="msg_user">messages.</span>
+                                <span class="time_ago">12 min ago</span>
+                                </span>
+                             </li>
+                            
+                          </ul>
+                       </div>
+                       <div class="read_more">
+                          <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+       
+        
+     </div>
+     <!-- end dashboard inner -->
+  </div>
+
+
+
+{% endblock content %}

@@ -1,0 +1,17 @@
+{% extends 'member/base.html' %}
+
+{% block content %}
+
+    <title>Add Sale</title>
+<body>
+    <h1>Add Sale</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Sale</button>
+    </form>
+    <a href="{% url 'sales' %}">View Sales</a>
+</body>
+
+
+{% endblock %}

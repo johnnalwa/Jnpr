@@ -1,0 +1,33 @@
+{% extends 'member/base.html' %}
+{% load static %} 
+{% block page_title %}Create Route Plan{% endblock %}
+
+{% block title %}Create Route Plan{% endblock title%}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.date.label_tag }}
+                {{ form.date }}
+                {{ form.date.errors }}
+                <br>
+                {{ form.agent.label_tag }}
+                {{ form.agent }}
+                {{ form.agent.errors }}
+                <br>
+                {{ form.institution.label_tag }}
+                {{ form.institution }}
+                {{ form.institution.errors }}
+                <br>
+                {{ form.location.label_tag }}
+                {{ form.location }}
+                {{ form.location.errors }}
+                <br>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
