@@ -4,13 +4,22 @@
     <h1>Sales</h1>
     <a href="{% url 'add_sale' %}">Add Sale</a>
     <a href="{% url 'monthly_sales' %}">Monthly Sales Totals</a>
-    {% for sale in sales %}
-    <div class="sale-card">
-        <h3>{{ sale.client_name }}</h3>
-        <p>Agent: {{ sale.agent }}</p>
-        <p>Amount Paid: ${{ sale.loan_amount_paid }}</p>
-        <p>Date Paid: {{ sale.date_paid }}</p>
+{% for sale in sales %}
+<div class="col-md-6 col-lg-3">
+    <div class="full counter_section margin_bottom_30">
+       <div class="couter_icon">
+             <div> 
+                <i class="fa fa-money blue1_color"></i>
+             </div>
+       </div>
+       <div class="counter_no">
+            <h3>{{ sale.client_name }}</h3>
+            <p>Agent: {{ sale.agent }}</p>
+            <p>Amount Paid: ${{ sale.loan_amount_paid }}</p>
+            <p>Date Paid: {{ sale.date_paid }}</p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</body>
+    
+</div>    
 {% endblock content %}

@@ -21,6 +21,7 @@ from asgiref.sync import async_to_sync
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import channels.layers
+from django.contrib import messages
 
 
 
@@ -135,7 +136,12 @@ def MemberDashboard(request):
 @login_required
 @management_required
 def ManagementDashboard(request):
-    return render(request, 'management/dashboard.html')
+    current_user = request.user
+    total_clients = Client.objects.filter(user=current_user).count()
+   
+    return render(request, 'management/dashboard.html', {
+        'total_clients': total_clients,
+    })
 
 
 @login_required
@@ -329,8 +335,25 @@ def get_notifications(request):
 def client_list(request):
     # Filter clients based on the currently logged-in user
     clients = Client.objects.filter(user=request.user)
+     
 
     # Select phone number, full name, and ministry
     client_data = clients.values('phone_number', 'client_fullname', 'ministry')
 
     return render(request, 'member/contacts.html', {'client_data': client_data})
+
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = MemberUpdateForm(request.POST, request.FILES, instance=request.user.member)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('update_profile')
+        else:
+            messages.error(request, 'Error updating profile. Please check the form.')
+    else:
+        form = MemberUpdateForm(instance=request.user.member)
+
+    return render(request, 'member/update_profile.html', {'form': form})

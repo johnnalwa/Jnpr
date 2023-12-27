@@ -98,3 +98,9 @@ class RoutePlanForm(forms.ModelForm):
             'institution': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 40%;'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 40%;'}),
         }
+        
+class MemberUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Member
+        fields = ['first_name', 'last_name', 'physical_address', 'national_id',
+                  'primary_phone_number', 'profile_img']

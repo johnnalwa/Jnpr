@@ -39,4 +39,5 @@ path('add_client/', views.add_client, name='add_client'),
    path('create_route_plan/', views.create_route_plan, name='create_route_plan'),
    path('contacts/', views.client_list, name='contacts_list'),
    path('client-list/', views.client_list_view, name='client-list'),
+   path('update_profile/', views.update_profile, name='update_profile'),
 ]

@@ -60,7 +60,7 @@
                     <div class="user_profle_side">
                         <div class="user_img"><img class="img-responsive" src="{% static 'images/layout_img/user_img.jpg' %}" alt="#" /></div>
                         <div class="user_info">
-                            <h6>Hi {{user.first_name.title|default:'Guest'}}</h6>
+                            <h6>Hi {{user.username.title|default:'Guest'}}</h6>
                             <p><span class="online_animation"></span> Online</p>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                                     <li>
                                         <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="{% static 'images/layout_img/user_img.jpg' %}" alt="#" /><span class="name_user">{% block full_name %}{% endblock %}</span></a>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#">My Profile</a>
+                                            <a class="dropdown-item" href="{% url 'update_profile' %}">My Profile</a>
                                             <a class="dropdown-item" href="#">Help</a>
                                             <a class="dropdown-item" href="{% url 'logout' %}"><span>Log Out</span> <i class="fa fa-sign-out"></i></a>
                                         </div>

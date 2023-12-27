@@ -1,0 +1,40 @@
+{% extends "member/base.html" %}
+{% load static %}
+{% block title %}Profile Page{% endblock title %}
+{% block content %}
+  <form method="post" enctype="multipart/form-data" id="profile-update-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Profile</button>
+  </form>
+
+
+  <!-- Add JavaScript to update the profile image dynamically -->
+  <script>
+    document.getElementById('profile-update-form').addEventListener('submit', function(event) {
+      // Get the selected file input
+      var fileInput = document.querySelector('input[type="file"]');
+      
+      // Check if a file is selected
+      if (fileInput.files.length > 0) {
+        // Get the file selected by the user
+        var selectedFile = fileInput.files[0];
+
+        // Create a FileReader to read the selected file
+        var reader = new FileReader();
+        
+        // Define the callback function to be executed when reading is completed
+        reader.onload = function(e) {
+          // Update the profile image source dynamically
+          document.getElementById('profile-image').src = e.target.result;
+        };
+        
+        // Read the selected file as a data URL
+        reader.readAsDataURL(selectedFile);
+      }
+
+      // Prevent the form from submitting, as we're handling it with JavaScript
+      event.preventDefault();
+    });
+  </script>
+{% endblock content %}
