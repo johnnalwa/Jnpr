@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from django.shortcuts import redirect, render
 from django.views.generic import CreateView
@@ -16,6 +17,11 @@ import datetime
 from .models import Attendance, Client, Commission, Sale
 from .forms import AttendanceForm, ClientForm, LoginForm, RoutePlanForm, SaleForm 
 import calendar
+from asgiref.sync import async_to_sync
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import channels.layers
+
 
 
 
@@ -132,8 +138,8 @@ def ManagementDashboard(request):
     return render(request, 'management/dashboard.html')
 
 
-# @login_required
-# @permission_required('your_app.add_sale', raise_exception=True)
+@login_required
+@management_required
 def add_sale(request):
     if request.method == 'POST':
         form = SaleForm(request.POST)
@@ -142,11 +148,11 @@ def add_sale(request):
             return redirect('sales')
     else:
         form = SaleForm()
-    return render(request, 'member/add_sale.html', {'form': form})
+    return render(request, 'management/add_sale.html', {'form': form})
 
 def display_sales(request):
     sales = Sale.objects.all()
-    return render(request, 'member/display_sales.html', {'sales': sales})
+    return render(request, 'management/display_sales.html', {'sales': sales})
 
 def monthly_sales(request):
     monthly_totals = Sale.objects.annotate(
@@ -247,6 +253,13 @@ def user_clients(request):
     clients = Client.objects.filter(user=request.user)
     return render(request, 'member/user_clients.html', {'clients': clients})
 
+@login_required
+@management_required
+def client_list_view(request):
+    clients = Client.objects.all()
+    context = {'clients': clients}
+    return render(request, 'management/client_list.html', context)
+
 def client_details(request, pk):
     client = get_object_or_404(Client, pk=pk)
     return render(request, 'member/client_details.html', {'client': client})
@@ -265,17 +278,52 @@ def commission_page(request):
 
     return render(request, 'member/commission_page.html', {'commission': commission, 'sales': sales})
 
+@login_required
+@management_required
 def create_route_plan(request):
     if request.method == 'POST':
         form = RoutePlanForm(request.POST)
         if form.is_valid():
-            form.instance.user = request.user  # Assign the current user to the route plan
-            form.save()
-            return redirect('create_route_plan')  # Redirect to a page displaying route plans
+            route_plan = form.save(commit=False)
+            route_plan.user = request.user
+            route_plan.save()
+            return redirect('create_route_plan')
+
     else:
         form = RoutePlanForm()
 
     return render(request, 'management/create_route_plan.html', {'form': form})
+
+@receiver(post_save, sender=RoutePlan)
+def send_notification_to_agent(sender, instance, **kwargs):
+    # Get the agent associated with the route plan
+    agent_username = instance.agent
+
+    # Find the agent user object
+    agent_user = User.objects.get(username=agent_username)
+
+    # Send a notification to the agent using Django Channels
+    channel_layer = channels.layers.get_channel_layer()
+
+    async def send_notification():
+        message = {
+            'type': 'notification',
+            'content': f'A new route plan has been created by {instance.user.username}.',
+        }
+        await channel_layer.group_send(f"agent_{agent_user.id}", {
+            'type': 'send_notification',
+            'message': json.dumps(message),
+        })
+
+    # Make the function asynchronous and run it in the event loop
+    async_to_sync(send_notification)()
+
+def get_notifications(request):
+    if request.user.is_authenticated:
+        notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')[:5]
+        return {'notifications': notifications}
+    return {}
+
 
 @login_required
 def client_list(request):

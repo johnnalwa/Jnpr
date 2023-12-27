@@ -149,3 +149,11 @@ class RoutePlan(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.agent} - {self.institution} - {self.location}"  
+    
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.message

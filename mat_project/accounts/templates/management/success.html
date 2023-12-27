@@ -1,0 +1,19 @@
+{% extends 'management/base.html' %}
+{% load static %} 
+{% block page_title %}FILL THE FORM BELOW TO ADD CLIENT{% endblock %}
+
+{% block title %} add clients successfully {% endblock title%}
+{% block content %}
+   
+    <div>
+        <h3>Agent Added Successfully</h3>
+        <p>Your agent has been added successfully!</p>
+        <p>You will be redirected to the previous page shortly.</p>
+    </div>
+    <script>
+        setTimeout(function () {
+            window.history.back(); // Redirect to the previous page
+        }, 3000); // Redirect after 3 seconds (adjust the delay as needed)
+    </script>
+{% endblock %}
+

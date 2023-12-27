@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'user_management',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +146,4 @@ CSRF_TRUSTED_ORIGINS=['http://127.0.0.1:3000','http://127.0.0.1:3000','http://12
 AUTH_USER_MODEL = "accounts.User" 
 LOGIN_REDIRECT_URL = 'member_dashboard'
 LOGIN_URL = 'login'
+
