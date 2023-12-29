@@ -75,7 +75,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'calendar_view' %}">
+                        <a href="{% url 'mark_attendance' %}">
                             <i class="fa fa-calendar"></i> <span>Daily Attendance Register</span>
                         </a>
                     </li>
@@ -119,11 +119,14 @@
                         </div>
                         <div class="right_topbar">
                             <div class="icon_info">
-                              <ul>
-                                <li><a href="#"><i class="fas fa-bell"></i><span class="badge">0</span></a></li>
-                                <li><a href="#"><i class="fas fa-question-circle"></i></a></li>
-                                <li><a href="#"><i class="fas fa-envelope"></i><span class="badge">0</span></a></li>
-                            </ul>
+                                <ul>
+                                    <li>
+                                        <a href="#" id="notification-icon">
+                                            <i class="fas fa-bell"></i>
+                                            <span class="badge">0</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             
                                 <ul class="user_profile_dd">
                                     <li>
@@ -140,6 +143,13 @@
                     </div>
                 </nav>
             </div>
+<!-- Notification dropdown -->
+<div id="notification-dropdown" style="position: absolute; top: 10px; left: 10px; width: 250px; background-color: #fff; border: 1px solid #ccc; border-radius: 5px; display: none;">
+    <ul style="list-style: none; padding: 10px; margin: 0;">
+        <!-- Notification items will be added dynamically here -->
+    </ul>
+</div>
+
             <!-- end topbar -->
             <!-- dashboard inner -->
             <div class="midde_cont">
@@ -188,6 +198,52 @@
 <!-- custom js -->
 <script src="{% static 'js/chart_custom_style1.js' %}"></script>
 <script src="{% static 'js/custom.js' %}"></script>
+
+<script>
+    // JavaScript code to handle the click event
+    document.addEventListener('DOMContentLoaded', function () {
+        var notificationIcon = document.getElementById('notification-icon');
+        var notificationDropdown = document.getElementById('notification-dropdown');
+
+        notificationIcon.addEventListener('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation(); // Prevents the click from triggering any other click events (e.g., closing the dropdown immediately)
+            
+            // Show or hide the notification dropdown based on its current state
+            if (notificationDropdown.style.display === 'none') {
+                // For demonstration purposes, let's add sample notifications dynamically
+                var notificationList = notificationDropdown.querySelector('ul');
+                notificationList.innerHTML = ''; // Clear previous notifications (if any)
+
+                var notifications = [
+                    'New notification 1',
+                    'New notification 2',
+                    'New notification 3'
+                    // Add more notifications as needed
+                ];
+
+                notifications.forEach(function (notification) {
+                    var listItem = document.createElement('li');
+                    listItem.textContent = notification;
+                    notificationList.appendChild(listItem);
+                });
+
+                // Show the notification dropdown
+                notificationDropdown.style.display = 'block';
+            } else {
+                // Hide the notification dropdown
+                notificationDropdown.style.display = 'none';
+            }
+        });
+
+        // Close the dropdown when clicking outside of it
+        document.addEventListener('click', function (event) {
+            if (event.target !== notificationIcon) {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+    });
+</script>
 {% block extra_js %}{% endblock %}
 
 </body>

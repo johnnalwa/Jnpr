@@ -6,7 +6,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.validators import RegexValidator
-
+from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 length= 255
@@ -108,18 +108,28 @@ class Client(models.Model):
         return self.client_fullname
 
 
+def get_current_date():
+    return timezone.now().date()
+
 class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField()
-    location = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)  # Store latitude as a DecimalField
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)  # Store longitude as a DecimalField
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    time = models.DateTimeField(default=timezone.now)
+    date = models.DateField(default=get_current_date, null=True)
 
     class Meta:
-        unique_together = ('user', 'date',)
-        
-        
+        unique_together = ['user', 'date']  # Ensure each user has only one attendance record per day
+
+    def save(self, *args, **kwargs):
+        # Set the 'time' field to the current timestamp
+        self.time = timezone.now()
+
+        # Set the 'date' field to the date part of 'time'
+        self.date = self.time.date()
+
+        super().save(*args, **kwargs)
+
 class Sale(models.Model):
     agent = models.ForeignKey(User, on_delete=models.CASCADE)
     client_name = models.CharField(max_length=100)

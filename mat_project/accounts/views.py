@@ -357,3 +357,66 @@ def update_profile(request):
         form = MemberUpdateForm(instance=request.user.member)
 
     return render(request, 'member/update_profile.html', {'form': form})
+
+@login_required
+@member_required
+def mark_attendance(request):
+    if request.method == 'POST':
+        form = AttendanceForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            latitude = form.cleaned_data['latitude']
+            longitude = form.cleaned_data['longitude']
+            current_time = form.cleaned_data['time']
+            current_date = timezone.now().date()  # Get the current date
+
+            # Check if attendance record already exists for the current user and date
+            if Attendance.objects.filter(user=user, date=current_date).exists():
+                messages.error(request, 'Attendance for today has already been marked!')
+            else:
+                # Save attendance record to the database with timestamp and date
+                Attendance.objects.create(user=user, latitude=latitude, longitude=longitude, time=current_time, date=current_date)
+
+                # Display a success message
+                messages.success(request, 'Attendance recorded successfully!')
+
+            # Redirect to a different page or use the same page
+            return redirect('mark_attendance')  # Change 'your_redirect_view_name' to the actual view name
+
+    else:
+        form = AttendanceForm()
+
+    # Get the attendance records for the current user
+    user = request.user
+    attendance_records = Attendance.objects.filter(user=user).order_by('-date')
+
+    return render(request, 'member/mark_attendance.html', {'form': form, 'attendance_records': attendance_records})
+
+
+
+@login_required
+@management_required
+def display_attendance(request):
+    # Query to get all distinct users and their latest attendance date
+    user_attendance_dates = Attendance.objects.values('user').annotate(latest_date=models.Max('date'))
+
+    # Collect attendance records for each user on their latest date
+    attendance_records = []
+    for record in user_attendance_dates:
+        user_id = record['user']
+        user = User.objects.get(pk=user_id)
+        
+        # Get the latest attendance record for the user
+        latest_attendance = Attendance.objects.filter(user=user).first()
+
+        if latest_attendance:
+            attendance_records.append({
+                'user': user.username,
+                'time': latest_attendance.time,
+                'latitude': latest_attendance.latitude,
+                'longitude': latest_attendance.longitude,
+            })
+
+    # Pass the attendance records to the template
+    context = {'attendance_records': attendance_records}
+    return render(request, 'management/display_attendance.html', context)

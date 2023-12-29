@@ -77,9 +77,9 @@ def __init__(self, *args, **kwargs):
         self.fields['comment_conversion'].widget.attrs['disabled'] = True
         
 class AttendanceForm(forms.Form):
-    latitude = forms.CharField(widget=forms.HiddenInput())
-    longitude = forms.CharField(widget=forms.HiddenInput())
-    
+    latitude = forms.FloatField(widget=forms.HiddenInput())
+    longitude = forms.FloatField(widget=forms.HiddenInput())
+    time = forms.DateTimeField()  # Add this line
 class SaleForm(forms.ModelForm):
     class Meta:
         model = Sale

@@ -14,7 +14,7 @@ urlpatterns = [
     
     path('management/dashboard/',views.ManagementDashboard, name="management_dashboard"),
     path('management/register/',views.RegisterManagementView.as_view(), name="register_management"),
-path('add_client/', views.add_client, name='add_client'),
+    path('add_client/', views.add_client, name='add_client'),
     path('success/', views.success_view, name='success_page'),
     path('success/', views.attendance_success, name='attendance_success'),  
     
@@ -40,4 +40,8 @@ path('add_client/', views.add_client, name='add_client'),
    path('contacts/', views.client_list, name='contacts_list'),
    path('client-list/', views.client_list_view, name='client-list'),
    path('update_profile/', views.update_profile, name='update_profile'),
-]
+   
+   path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
+   path('display_attendance/', views.display_attendance, name='display_attendance'),
+   
+   ]
