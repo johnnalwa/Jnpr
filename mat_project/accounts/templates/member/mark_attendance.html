@@ -1,47 +1,46 @@
 {% extends 'member/base.html' %}
 {% load static %} 
+
 {% block page_title %}Attendance Record{% endblock %}
 
 {% block title %} daily attendance {% endblock title%}
+
 {% block content %}
   <div class="container">
-    
     <!-- Display the attendance records -->
     <div class="mt-3">
-      
-      <table class="table" style="width: 50%; margin: auto;">
+      <table class="table" style="width: 80%; margin: auto; border: 2px solid #040529;">
         <thead>
           <tr>
-          
-            <th scope="col">Time</th>
-            <th scope="col">Marked</th>
+            <th scope="col" style="text-align: center;">Time</th>
+            <th scope="col" style="text-align: center;">Marked</th>
           </tr>
         </thead>
         <tbody>
           {% for record in attendance_records %}
             <tr>
-              
-              <td>{{ record.time }}</td>
-              <td><input type="checkbox" checked disabled></td>
+              <td style="text-align: center;">{{ record.time }}</td>
+              <td style="text-align: center;"><input type="checkbox" checked disabled></td>
             </tr>
           {% empty %}
             <tr>
-              <td colspan="3">No attendance records found.</td>
+              <td colspan="3" style="text-align: center;">No attendance records found.</td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
 
-    <form method="post" action="{% url 'mark_attendance' %}">
-      {% csrf_token %}
-      <input type="hidden" name="latitude" id="latitude" />
-      <input type="hidden" name="longitude" id="longitude" />
-      <input type="hidden" name="time" id="time" />
+    <div class="mt-3 d-flex justify-content-center">
+      <form method="post" action="{% url 'mark_attendance' %}">
+        {% csrf_token %}
+        <input type="hidden" name="latitude" id="latitude" />
+        <input type="hidden" name="longitude" id="longitude" />
+        <input type="hidden" name="time" id="time" />
 
-      <button type="submit" class="btn btn-primary btn-lg" style="background-color: rgb(16, 224, 103);" onclick="return showMessage()" data-toggle="tooltip" title="Click to mark attendance">Mark Attendance</button>
-
-    </form>
+        <button type="submit" class="btn btn-primary btn-lg" style="background-color: rgb(16, 224, 103);" onclick="return showMessage()" data-toggle="tooltip" title="Click to mark attendance">Mark Attendance</button>
+      </form>
+    </div>
 
     {% if messages %}
       <div class="mt-3">

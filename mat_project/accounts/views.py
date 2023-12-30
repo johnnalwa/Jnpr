@@ -1,6 +1,6 @@
 import json
-from django.shortcuts import render
-from django.shortcuts import redirect, render
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView
 from .models import *
 from .forms import *
@@ -10,12 +10,8 @@ from django.urls import reverse
 from .decorators import *
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
-from django.shortcuts import render, get_object_or_404
 from decimal import Decimal
-from django.shortcuts import render, redirect, get_object_or_404
 import datetime
-from .models import Attendance, Client, Commission, Sale
-from .forms import AttendanceForm, ClientForm, LoginForm, RoutePlanForm, SaleForm 
 import calendar
 from asgiref.sync import async_to_sync
 from django.db.models.signals import post_save
@@ -109,10 +105,11 @@ class RegisterManagementView(CreateView):
         #login(self.request, user)
         return redirect('login')
     
+
 @login_required
 @member_required
 def MemberDashboard(request):
-   # Call the update_commissions function to update commissions first
+    # Call the update_commissions function to update commissions first
     update_commissions()
 
     # Retrieve the logged-in user's commission for the current month
@@ -126,12 +123,25 @@ def MemberDashboard(request):
     # Retrieve the routes for the currently logged-in user
     user_routes = RoutePlan.objects.filter(user=current_user)
 
+    # Retrieve monthly sales data for the line chart
+    sales_data = get_monthly_sales_data(current_user)
+
     return render(request, 'member/dashboard.html', {
         'commission': user_commission,
         'total_clients': total_clients,
-        'user_routes': user_routes  # Pass the user's routes to the template
+        'user_routes': user_routes,  # Pass the user's routes to the template
+        'sales_data': sales_data,
     })
-    
+
+def get_monthly_sales_data(user):
+    current_month = datetime.date.today().month
+    sales = Sale.objects.filter(agent=user, date_paid__month=current_month).order_by('date_paid')
+
+    labels = [sale.date_paid.strftime('%Y-%m-%d') for sale in sales]
+    data = [sale.loan_amount_paid for sale in sales]
+
+    return {'labels': labels, 'data': data}
+
 
 @login_required
 @management_required
@@ -284,6 +294,7 @@ def commission_page(request):
 
     return render(request, 'member/commission_page.html', {'commission': commission, 'sales': sales})
 
+
 @login_required
 @management_required
 def create_route_plan(request):
@@ -293,43 +304,25 @@ def create_route_plan(request):
             route_plan = form.save(commit=False)
             route_plan.user = request.user
             route_plan.save()
+            messages.success(request, 'Route created successfully!')
             return redirect('create_route_plan')
 
     else:
         form = RoutePlanForm()
 
-    return render(request, 'management/create_route_plan.html', {'form': form})
+    # Fetch all routes
+    routes = RoutePlan.objects.all()
 
-@receiver(post_save, sender=RoutePlan)
-def send_notification_to_agent(sender, instance, **kwargs):
-    # Get the agent associated with the route plan
-    agent_username = instance.agent
+    return render(request, 'management/create_route_plan.html', {'form': form, 'routes': routes})
 
-    # Find the agent user object
-    agent_user = User.objects.get(username=agent_username)
 
-    # Send a notification to the agent using Django Channels
-    channel_layer = channels.layers.get_channel_layer()
-
-    async def send_notification():
-        message = {
-            'type': 'notification',
-            'content': f'A new route plan has been created by {instance.user.username}.',
-        }
-        await channel_layer.group_send(f"agent_{agent_user.id}", {
-            'type': 'send_notification',
-            'message': json.dumps(message),
-        })
-
-    # Make the function asynchronous and run it in the event loop
-    async_to_sync(send_notification)()
-
-def get_notifications(request):
-    if request.user.is_authenticated:
-        notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')[:5]
-        return {'notifications': notifications}
-    return {}
-
+@login_required
+@management_required
+def delete_route_plan(request, route_id):
+    route = get_object_or_404(RoutePlan, id=route_id)
+    route.delete()
+    messages.success(request, 'Route deleted successfully!')
+    return redirect('create_route_plan')
 
 @login_required
 def client_list(request):

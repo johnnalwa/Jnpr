@@ -77,31 +77,32 @@
                  </div>
               </div>
            </div>
-           
-           <!-- graph -->
-           <div class="row column2 graph margin_bottom_30">
-              <div class="col-md-l2 col-lg-12">
-                 <div class="white_shd full">
-                    <div class="full graph_head">
-                       <div class="heading1 margin_0">
-                          <h2>Agents Sales Chart</h2>
-                       </div>
-                    </div>
-                    <div class="full graph_head">
-                       <div class="row">
-                          <div class="col-md-12">
-                             <div class="content">
-                                <div class="line_chart">
-                                   <canvas height="120" id="line_chart"></canvas>
-                                </div>
-                             </div>
-                          </div>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-           </div>
-           <!-- end graph -->
+                  
+                  <!-- graph -->
+         <div class="row column2 graph margin_bottom_30">
+            <div class="col-md-l2 col-lg-12">
+               <div class="white_shd full">
+                  <div class="full graph_head">
+                        <div class="heading1 margin_0">
+                           <h2>Agent Sales Chart</h2>
+                        </div>
+                  </div>
+                  <div class="full graph_head">
+                        <div class="row">
+                           <div class="col-md-12">
+                              <div class="content">
+                                    <div class="line_chart">
+                                       <canvas height="120" id="line_chart"></canvas>
+                                    </div>
+                              </div>
+                           </div>
+                        </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+
            <div class="row column3">
              
               
@@ -178,5 +179,40 @@
   </div>
 
 
+<!-- JavaScript code to populate the line chart -->
+<script>
+   document.addEventListener("DOMContentLoaded", function () {
+       var ctx = document.getElementById('line_chart').getContext('2d');
 
+       // Retrieve data from the server-side (you may need to update the URL)
+       var salesData = JSON.parse("{{ sales_data|escapejs }}");
+
+       var lineChart = new Chart(ctx, {
+           type: 'line',
+           data: {
+               labels: salesData.labels,
+               datasets: [{
+                   label: 'Monthly Sales',
+                   data: salesData.data,
+                   fill: false,
+                   borderColor: 'rgb(75, 192, 192)',
+                   tension: 0.1
+               }]
+           },
+           options: {
+               scales: {
+                   x: {
+                       type: 'time',
+                       time: {
+                           unit: 'month'
+                       }
+                   },
+                   y: {
+                       beginAtZero: true
+                   }
+               }
+           }
+       });
+   });
+</script>
 {% endblock content %}

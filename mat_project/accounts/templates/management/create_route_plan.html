@@ -2,52 +2,40 @@
 {% load static %} 
 {% block page_title %}Create Route Plan{% endblock %}
 
-{% block title %}Create Route Plan{% endblock title%}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <form method="post">
-                {% csrf_token %}
-                {{ form.date.label_tag }}
-                {{ form.date }}
-                {{ form.date.errors }}
-                <br>
-                {{ form.agent.label_tag }}
-                {{ form.agent }}
-                {{ form.agent.errors }}
-                <br>
-                {{ form.institution.label_tag }}
-                {{ form.institution }}
-                {{ form.institution.errors }}
-                <br>
-                {{ form.location.label_tag }}
-                {{ form.location }}
-                {{ form.location.errors }}
-                <br>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-        </div>
-    </div>
-</div>
-<script>
-    var ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + '/ws/notifications/';
-    var socket = new WebSocket(ws_path);
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
 
-    socket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        if (data.type === 'notification') {
-            // Handle the incoming notification
-            var notificationContent = data.message;
-            // Update your HTML to display the notification
-            // (e.g., add a new list item to the existing list)
-            // Example: Assuming you have a <ul> with the id "notification-list"
-            var notificationList = document.getElementById('notification-list');
-            var listItem = document.createElement('li');
-            listItem.textContent = notificationContent;
-            notificationList.appendChild(listItem);
-        }
-    };
-</script>
+{% if messages %}
+{% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endfor %}
+{% endif %}
+
+<!-- Display routes -->
+<div class="row" style="max-height: 500px; overflow-y: auto;">
+  {% for route in routes %}
+    <div class="col-md-4">
+      <div class="card mb-4" style="width: 80%; height: 0; padding-bottom: 80%;">
+        <div class="card-body" style="position: absolute;">
+          <h5 class="card-title">{{ route.date }}</h5>
+          <p class="card-text">
+            Agent: {{ route.agent }}<br>
+            Institution: {{ route.institution }}<br>
+            Location: {{ route.location }}
+          </p>
+          <a href="{% url 'delete_route_plan' route.id %}" class="btn btn-danger">Delete</a> <!-- Add delete button here -->
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <p>No routes found.</p>
+  {% endfor %}
+</div>
 {% endblock %}

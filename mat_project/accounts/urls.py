@@ -43,5 +43,6 @@ urlpatterns = [
    
    path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
    path('display_attendance/', views.display_attendance, name='display_attendance'),
+   path('delete_route_plan/<int:route_id>/', views.delete_route_plan, name='delete_route_plan'),
    
    ]
