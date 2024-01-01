@@ -32,7 +32,7 @@ urlpatterns = [
     path('commission/', views.commission_page, name='commission_page'),
     
     path('add_sale/', views.add_sale, name='add_sale'),
-    path('sales/', views.display_sales, name='sales'),
+    # path('sales/', views.display_sales, name='sales'),
     path('monthly_sales/', views.monthly_sales, name='monthly_sales'),
     # path('monthly_commissions/', views.monthly_commissions, name='monthly_commissions'),
     
@@ -44,5 +44,5 @@ urlpatterns = [
    path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
    path('display_attendance/', views.display_attendance, name='display_attendance'),
    path('delete_route_plan/<int:route_id>/', views.delete_route_plan, name='delete_route_plan'),
-   
+   path('view-all-clients/', views.view_all_clients, name='view_all_clients'),
    ]

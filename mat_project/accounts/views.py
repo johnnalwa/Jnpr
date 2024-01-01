@@ -18,7 +18,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 import channels.layers
 from django.contrib import messages
-
+from django.contrib.auth.decorators import user_passes_test
 
 
 
@@ -161,22 +161,26 @@ def add_sale(request):
         form = SaleForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('sales')
+            messages.success(request, 'Sale added successfully.')
+            return redirect('add_sale')  # Redirect to clear the form after successful submission
     else:
         form = SaleForm()
-    return render(request, 'management/add_sale.html', {'form': form})
 
-def display_sales(request):
+    # Check if a sale_id is provided for deletion
+    sale_id = request.POST.get('sale_id')
+    if sale_id:
+        try:
+            sale_to_delete = Sale.objects.get(pk=sale_id)
+            sale_to_delete.delete()
+            messages.success(request, 'Sale deleted successfully.')
+            return redirect('add_sale')
+
+        except Sale.DoesNotExist:
+            messages.error(request, 'Sale not found for deletion.')
+
     sales = Sale.objects.all()
-    return render(request, 'management/display_sales.html', {'sales': sales})
 
-def monthly_sales(request):
-    monthly_totals = Sale.objects.annotate(
-        month=TruncMonth('date_paid')
-    ).values('month').annotate(total_amount_paid=Sum('loan_amount_paid')).order_by('month')
-
-    return render(request, 'member/monthly_sales.html', {'monthly_totals': monthly_totals})
-
+    return render(request, 'management/add_sale.html', {'form': form, 'sales': sales})
 
 
 @login_required
@@ -413,3 +417,19 @@ def display_attendance(request):
     # Pass the attendance records to the template
     context = {'attendance_records': attendance_records}
     return render(request, 'management/display_attendance.html', context)
+
+
+# Decorator to check if the user is a superior user
+def is_superior_user(user):
+    return user.is_authenticated and user.is_management
+
+@login_required
+@user_passes_test(is_superior_user)
+def view_all_clients(request):
+    # Fetch all clients for all users
+    all_clients = Client.objects.all()
+
+    # You can customize this based on your requirements
+    context = {'all_clients': all_clients}
+
+    return render(request, 'management/view_all_clients.html', context)

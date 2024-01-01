@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accounts',
     'user_management',
     'channels',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

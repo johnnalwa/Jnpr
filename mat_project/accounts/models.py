@@ -19,7 +19,6 @@ expiry_days= 255
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     is_member = models.BooleanField(default=False)
-    is_vendor = models.BooleanField(default=False)
     is_management = models.BooleanField(default=False)
  
 class ManagementAdmin(models.Model):

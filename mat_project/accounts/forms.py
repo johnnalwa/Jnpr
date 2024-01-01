@@ -84,7 +84,13 @@ class SaleForm(forms.ModelForm):
     class Meta:
         model = Sale
         fields = ['agent', 'client_name', 'loan_amount_paid', 'date_paid']
-        
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['agent'].widget.attrs.update({'class': 'form-control'})
+        self.fields['client_name'].widget.attrs.update({'class': 'form-control'})
+        self.fields['loan_amount_paid'].widget.attrs.update({'class': 'form-control'})
+        self.fields['date_paid'].widget.attrs.update({'class': 'form-control datepicker'})
         
 class RoutePlanForm(forms.ModelForm):
     agent = forms.ModelChoiceField(queryset=User.objects.all().order_by('username'))
