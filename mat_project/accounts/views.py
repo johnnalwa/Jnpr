@@ -1,4 +1,5 @@
-import json
+import psutil
+import requests
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView
@@ -11,7 +12,6 @@ from .decorators import *
 from django.db.models import Sum
 from django.db.models.functions import TruncMonth
 from decimal import Decimal
-import datetime
 import calendar
 from asgiref.sync import async_to_sync
 from django.db.models.signals import post_save
@@ -19,8 +19,8 @@ from django.dispatch import receiver
 import channels.layers
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
-
-
+import datetime  
+from .utils import get_logged_in_users
 
 
 def update_commissions():
@@ -54,8 +54,6 @@ def login(request):
         'form': form
     }
     return render(request, 'login.html', context)
-
-
 class LoginView(auth_views.LoginView):
     form_class = LoginForm
     template_name = 'login.html'
@@ -66,16 +64,17 @@ class LoginView(auth_views.LoginView):
     def get_success_url(self):
         user = self.request.user
         if user.is_authenticated:
+            # Retrieve information about currently logged-in users
+            users_info = get_logged_in_users()
+            self.request.session['logged_in_users'] = users_info  # Store info in session
+
+            # Redirect users based on their roles
             if user.is_member:
                 return reverse('member_dashboard')
             elif user.is_management:
                 return reverse('management_dashboard')
-            
         else:
             return reverse('login')
-        
-
-
 class RegisterMemberView(CreateView):
     model = User
     form_class = MemberSignUpForm
@@ -433,3 +432,15 @@ def view_all_clients(request):
     context = {'all_clients': all_clients}
 
     return render(request, 'management/view_all_clients.html', context)
+
+    
+def logged_in_users_info(request):
+    # Fetch information about currently logged-in users
+    users_info = get_logged_in_users()
+
+    # Prepare data for rendering
+    context = {
+        'users_info': users_info
+    }
+
+    return render(request, 'logged_in_users_info.html', context)

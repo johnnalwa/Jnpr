@@ -45,4 +45,5 @@ urlpatterns = [
    path('display_attendance/', views.display_attendance, name='display_attendance'),
    path('delete_route_plan/<int:route_id>/', views.delete_route_plan, name='delete_route_plan'),
    path('view-all-clients/', views.view_all_clients, name='view_all_clients'),
-   ]
+   path('logged-in-users-info/', views.logged_in_users_info, name='logged_in_users_info'),
+ ]

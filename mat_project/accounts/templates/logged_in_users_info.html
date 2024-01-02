@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logged-in Users Information</title>
+</head>
+<body>
+    <h1>Logged-in Users Information</h1>
+    {% for user_info in users_info %}
+        <p>Timestamp: {{ user_info.timestamp }}</p>
+        <p>IP Address: {{ user_info.ip_address }}</p>
+        {% if user_info.location_info %}
+            <p>Location Info: {{ user_info.location_info }}</p>
+        {% endif %}
+        <hr>
+    {% endfor %}
+</body>
+</html>
