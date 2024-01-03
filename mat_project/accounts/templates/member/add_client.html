@@ -140,7 +140,7 @@
                 const clientTypeSelect = document.querySelector('#id_type');
                 const leadFields = document.querySelector('#lead-fields');
                 const conversionFields = document.querySelector('#conversion-fields');
-
+            
                 function toggleFields() {
                     const selectedType = clientTypeSelect.value;
                     if (selectedType === 'lead' || selectedType === 'conversion') {
@@ -151,24 +151,88 @@
                         conversionFields.style.display = 'none';
                     }
                 }
-
+            
                 toggleFields();
-
+            
                 clientTypeSelect.addEventListener('change', toggleFields);
-
+            
                 function clearForm() {
-                        document.getElementById("addClientForm").reset();
-                        // Additionally, you may want to reset the visibility of lead and conversion fields
-                        toggleFields();
-                    }
-
+                    document.getElementById("addClientForm").reset();
+                    // Additionally, you may want to reset the visibility of lead and conversion fields
+                    toggleFields();
+                }
+            
                 // Disable form submission on page reload
                 if (window.history.replaceState) {
                     window.history.replaceState(null, null, window.location.href);
                 }
+            
+                // Handling form submission response
+                document.getElementById('addClientForm').addEventListener('submit', async function (event) {
+                    event.preventDefault();
+            
+                    const formData = new FormData(this);
+                    try {
+                        const response = await fetch(this.action, {
+                            method: this.method,
+                            body: formData,
+                        });
+            
+                        if (response.ok) {
+                            // Parse the JSON response
+                            const jsonResponse = await response.json();
+            
+                            // Display the success message with a green background
+                            displayMessage(jsonResponse.success, 'success');
+                        } else if (response.status === 400) {
+                            // Parse the JSON response for form errors
+                            const jsonErrors = await response.json();
+            
+                            // Display specific form errors with a red background
+                            let errorMessage = 'Error occurred while adding the client:\n';
+                            for (const field in jsonErrors.error) {
+                                errorMessage += `${field}: ${jsonErrors.error[field]}\n`;
+                            }
+                            displayMessage(errorMessage, 'error');
+                        } else {
+                            // Handle other response statuses if needed
+                            displayMessage('Error occurred while adding the client', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error occurred:', error);
+                        displayMessage('Error occurred while adding the client', 'error');
+                    }
+                });
+            
+                function displayMessage(message, type) {
+                    const messageBox = document.createElement('div');
+                    messageBox.textContent = message;
+                    messageBox.style.padding = '10px';
+                    messageBox.style.marginTop = '10px';
+                    messageBox.style.borderRadius = '5px';
+                    messageBox.style.color = 'white'; // Set text color to white
+
+            
+                    if (type === 'success') {
+                        messageBox.style.backgroundColor = '#4CAF50'; // Green background for success
+                    } else {
+                        messageBox.style.backgroundColor = '#FF6347'; // Red background for error
+                    }
+            
+                    // Display the message box at the top of the form
+                    document.getElementById('addClientForm').insertAdjacentElement('beforebegin', messageBox);
+            
+                    // Remove the message box after a few seconds (adjust the timeout as needed)
+                    setTimeout(() => {
+                        messageBox.remove();
+                    }, 5000);
+                }
             </script>
+            
 
         </div>
     </div>
 </div>
+
+
 {% endblock %}

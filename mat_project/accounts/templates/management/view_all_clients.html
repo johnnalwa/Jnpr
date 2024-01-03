@@ -4,6 +4,7 @@
 
 {% block title %} clients {% endblock title%}
 {% block content %}
+
   <div class="row">
     <div class="col-md-6 mb-4">
       <label for="nameFilter">Search by Name:</label>
@@ -15,10 +16,10 @@
         <option value="all">All</option>
         <option value="prospects">Prospects</option>
         <option value="lead">Lead</option>
-        <option value="conversation">Conversation</option>
+        <option value="conversion">Conversion</option>
       </select>
     </div>
-    {% for client in clients %}
+    {% for client in all_clients %}
       <div class="col-md-4 mb-4 client-card" data-category="{{ client.type }}" data-name="{{ client.client_fullname }}">
         <div class="card">
           <div class="card-icon">

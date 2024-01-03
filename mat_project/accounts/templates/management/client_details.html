@@ -33,7 +33,7 @@
           <p class="card-text"><strong>Date:</strong> {{ client.date_field }}</p>
           <p class="card-text"><strong>Comment (Conversion):</strong> {{ client.comment_conversion }}</p>
         {% endif %}
-        <a href="{% url 'user_clients' %}" class="btn btn-primary">Back</a>
+        <a href="{% url 'view_all_clients' %}" class="btn btn-primary">Back</a>
       </div>
     </div>
   {% else %}

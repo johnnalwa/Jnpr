@@ -71,7 +71,7 @@
                     <div class="counter_no">
                        <div>
                           <p class="total_no">54</p>
-                          <p class="head_couter">Comments</p>
+                          <p class="head_couter">messages</p>
                        </div>
                     </div>
                  </div>
@@ -147,7 +147,7 @@
                               <p>Latest Updates</p>
                           </div>
                           <div class="msg_list_main">
-                              <h1>new</h1>
+                        
                               <ul class="msg_list">
                                   {% for notification in agent_notifications %}
                                   <li>
@@ -155,14 +155,14 @@
                                       <span>
                                           <span class="name_user">{{ notification.user.username }}</span>
                                           <span class="msg_user">{{ notification.message }}</span>
-                                          <span class="time_ago">{{ notification.created_at }}</span>
+                                          <span class="time_ago">{{ notification.timestamp }}</span>
                                       </span>
                                   </li>
                                   {% endfor %}
                               </ul>
                               <ul id="notification-list">
-                                 <h1>new</h1>
-                             </ul>
+                                  
+                              </ul>
                           </div>
                           <div class="read_more">
                               <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div>
@@ -170,6 +170,7 @@
                       </div>
                   </div>
               </div>
+              
               
               
        

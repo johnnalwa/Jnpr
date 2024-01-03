@@ -23,7 +23,7 @@ urlpatterns = [
     
     path('user-clients/', views.user_clients, name='user_clients'),
     # path('admin-clients/', views.admin_clients, name='admin_clients'),
-    path('client/<int:pk>/', views.client_details, name='client_details'),
+    path('client/<int:pk>/', views.mclient_details, name='client_details'),
     path('charts/', views.charts, name='charts_page'),
 
     # path('add_sales/', views.enter_client_data, name='enter_client_data'),
@@ -44,6 +44,11 @@ urlpatterns = [
    path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
    path('display_attendance/', views.display_attendance, name='display_attendance'),
    path('delete_route_plan/<int:route_id>/', views.delete_route_plan, name='delete_route_plan'),
-   path('view-all-clients/', views.view_all_clients, name='view_all_clients'),
+   path('view-all-clients/', views.allclients, name='view_all_clients'),
    path('logged-in-users-info/', views.logged_in_users_info, name='logged_in_users_info'),
+   
+   path('members/', views.members_view, name='members'),
+   path('delete_member/<int:user_id>/', views.delete_member, name='delete_member'),
+
+
  ]

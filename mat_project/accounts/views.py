@@ -119,6 +119,7 @@ class RegisterManagementView(CreateView):
         return redirect('login')
     
 
+
 @login_required
 @member_required
 def MemberDashboard(request):
@@ -139,13 +140,17 @@ def MemberDashboard(request):
     # Retrieve monthly sales data for the line chart
     sales_data = get_monthly_sales_data(current_user)
 
+    # Fetch notifications for the current user
+    agent_notifications = Notification.objects.filter(user=current_user)
+
     return render(request, 'member/dashboard.html', {
         'commission': user_commission,
         'total_clients': total_clients,
         'user_routes': user_routes,  # Pass the user's routes to the template
         'sales_data': sales_data,
+        'agent_notifications': agent_notifications,  # Pass notifications to the template
     })
-
+    
 def get_monthly_sales_data(user):
     current_month = datetime.date.today().month
     sales = Sale.objects.filter(agent=user, date_paid__month=current_month).order_by('date_paid')
@@ -155,17 +160,17 @@ def get_monthly_sales_data(user):
 
     return {'labels': labels, 'data': data}
 
-
 @login_required
 @management_required
 def ManagementDashboard(request):
     current_user = request.user
-    total_clients = Client.objects.filter(user=current_user).count()
-   
+    total_clients = Client.objects.count()
+    total_agents = Member.objects.count()  # Counting total agents
+    
     return render(request, 'management/dashboard.html', {
         'total_clients': total_clients,
+        'total_agents': total_agents,  # Pass total_agents to the template
     })
-
 
 @login_required
 @management_required
@@ -227,20 +232,24 @@ def monthly_sales(request):
 
 @login_required
 def add_client(request):
-    total_clients = Client.objects.count()  # Get the count of clients
+    total_clients = Client.objects.count()
+
     if request.method == 'POST':
         form = ClientForm(request.POST)
         if form.is_valid():
             client = form.save(commit=False)
             client.user = request.user
             client.save()
-            return redirect('success_page')
-        
+            return JsonResponse({'success': 'Client added successfully'})
+        else:
+            # Return form errors in the JSON response
+            errors = {field: form.errors[field][0] for field in form.errors}
+            return JsonResponse({'error': errors}, status=400)
+
     else:
         form = ClientForm()
 
     return render(request, 'member/add_client.html', {'form': form, 'total_clients': total_clients})
-
 
 def calendar_view(request):
     # Create a calendar object
@@ -293,10 +302,13 @@ def client_list_view(request):
     context = {'clients': clients}
     return render(request, 'management/client_list.html', context)
 
+def mclient_details(request, pk):
+    client = get_object_or_404(Client, pk=pk)
+    return render(request, 'management/client_details.html', {'client': client})
+
 def client_details(request, pk):
     client = get_object_or_404(Client, pk=pk)
     return render(request, 'member/client_details.html', {'client': client})
-
 def attendance_success(request):
     return render(request, 'attendance_success.html')
 
@@ -383,15 +395,14 @@ def mark_attendance(request):
             # Check if attendance record already exists for the current user and date
             if Attendance.objects.filter(user=user, date=current_date).exists():
                 messages.error(request, 'Attendance for today has already been marked!')
+                return redirect('mark_attendance')
             else:
                 # Save attendance record to the database with timestamp and date
                 Attendance.objects.create(user=user, latitude=latitude, longitude=longitude, time=current_time, date=current_date)
 
                 # Display a success message
                 messages.success(request, 'Attendance recorded successfully!')
-
-            # Redirect to a different page or use the same page
-            return redirect('mark_attendance')  # Change 'your_redirect_view_name' to the actual view name
+                return redirect('mark_attendance')
 
     else:
         form = AttendanceForm()
@@ -401,8 +412,6 @@ def mark_attendance(request):
     attendance_records = Attendance.objects.filter(user=user).order_by('-date')
 
     return render(request, 'member/mark_attendance.html', {'form': form, 'attendance_records': attendance_records})
-
-
 
 @login_required
 @management_required
@@ -458,3 +467,22 @@ def logged_in_users_info(request):
     }
 
     return render(request, 'logged_in_users_info.html', context)
+
+def members_view(request):
+    members = Member.objects.all()
+    return render(request, 'management/members.html', {'members': members})
+
+
+def delete_member(request, user_id):
+    user = User.objects.get(id=user_id)
+    user.delete()
+    return redirect('members')  # Redirect to the members view or any other appropriate page
+
+@login_required
+@management_required
+def allclients(request):
+    all_clients = Client.objects.all()
+    
+    return render(request, 'management/view_all_clients.html', {
+        'all_clients': all_clients,
+    })

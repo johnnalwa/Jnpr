@@ -82,16 +82,8 @@
                         </a>
                     </li>
                     
-                    <li>
-                        <a href="#">
-                            <i class="fa fa-paper-plane red_color"></i> <span>Contacts</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'add_client' %}">
-                            <i class="fa fa-user-plus"></i> <span>Add Clients</span>
-                        </a>
-                    </li>
+                    
+                    
                    
                     <li>
                         <a href="{% url 'view_all_clients' %}">
@@ -99,18 +91,24 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'create_route_plan' %}">
-                            <i class="fa fa-users"></i> <span>Create Routes</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'add_sale' %}">
-                            <i class="fa fa-user-plus"></i> <span>Add Sales</span>
+                        <a href="{% url 'members' %}">
+                            <i class="fa fa-user"></i> <span>AGENTS</span>
                         </a>
                     </li>
                     
-                    <li><a href="{% url 'charts_page' %}"><i class="fa fa-bar-chart-o green_color"></i> <span>Charts</span></a></li>
                     <li>
+                        <a href="{% url 'create_route_plan' %}">
+                            <i class="fa fa-map-marker"></i> <span>Create Routes</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="{% url 'add_sale' %}">
+                            <i class="fa fa-shopping-cart"></i> <span>Add Sales</span>
+                        </a>
+                    </li>
+                    
+                
                       <a href="{% url 'logout' %}">
                           <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
                       </a>
