@@ -268,3 +268,41 @@ function initMap() {
     icon: image
   });
 }
+// scripts.js
+
+// Use Google Maps API to get user's location
+navigator.geolocation.getCurrentPosition(
+  (position) => {
+    document.getElementById('latitude').value = position.coords.latitude;
+    document.getElementById('longitude').value = position.coords.longitude;
+    document.getElementById('time').value = new Date().toISOString();  // Set the current timestamp
+  },
+  (error) => {
+    console.error(error.message);
+  }
+);
+
+function showMessage(message, type) {
+  const messageBox = document.createElement('div');
+  messageBox.textContent = message;
+  messageBox.style.padding = '10px';
+  messageBox.style.marginTop = '10px';
+  messageBox.style.borderRadius = '5px';
+
+  if (type === 'success') {
+    messageBox.style.color = '#4CAF50'; // Green text color for success
+    // Display the success modal
+    $('#successMessage').text(message);
+    $('#successModal').modal('show');
+  } else {
+    messageBox.style.color = '#FF6347'; // Red text color for error
+    // Display the error modal
+    $('#errorMessage').text(message);
+    $('#errorModal').modal('show');
+  }
+
+  // Remove the message box after a few seconds (adjust the timeout as needed)
+  setTimeout(() => {
+    messageBox.remove();
+  }, 5000);
+}

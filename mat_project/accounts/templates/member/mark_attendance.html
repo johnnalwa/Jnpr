@@ -68,28 +68,28 @@
         console.error(error.message);
       }
     );
-
+  
     function showMessage(message, type) {
-        const messageBox = document.createElement('div');
-        messageBox.textContent = message;
-        messageBox.style.padding = '10px';
-        messageBox.style.marginTop = '10px';
-        messageBox.style.borderRadius = '5px';
-        messageBox.style.color = 'white'; // Set text color to white
-
-        if (type === 'success') {
-            messageBox.style.backgroundColor = '#4CAF50'; // Green background for success
-        } else {
-            messageBox.style.backgroundColor = '#FF6347'; // Red background for error
-        }
-
-        // Display the message box at the top of the form
-        document.querySelector('.container').insertAdjacentElement('afterbegin', messageBox);
-
-        // Remove the message box after a few seconds (adjust the timeout as needed)
-        setTimeout(() => {
-            messageBox.remove();
-        }, 5000);
+      const messageBox = document.createElement('div');
+      messageBox.textContent = message;
+      messageBox.style.padding = '10px';
+      messageBox.style.marginTop = '10px';
+      messageBox.style.borderRadius = '5px';
+  
+      if (type === 'success') {
+        messageBox.style.color = '#4CAF50'; // Green text color for success
+      } else {
+        messageBox.style.color = '#FF6347'; // Red text color for error
+      }
+  
+      // Display the message box at the top of the form
+      document.querySelector('.container').insertAdjacentElement('afterbegin', messageBox);
+  
+      // Remove the message box after a few seconds (adjust the timeout as needed)
+      setTimeout(() => {
+        messageBox.remove();
+      }, 5000);
     }
   </script>
+  
 {% endblock %}
