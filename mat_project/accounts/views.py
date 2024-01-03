@@ -1,5 +1,7 @@
 import psutil
 import requests
+from django.views.generic.edit import CreateView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView
@@ -21,6 +23,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 import datetime  
 from .utils import get_logged_in_users
+from django.urls import reverse_lazy
 
 
 def update_commissions():
@@ -80,19 +83,25 @@ class LoginView(auth_views.LoginView):
         messages.error(self.request, 'You are not authenticated. Please log in.')
         return reverse('login')
         
-class RegisterMemberView(CreateView):
+class RegisterMemberView(SuccessMessageMixin, CreateView):
     model = User
     form_class = MemberSignUpForm
     template_name = 'member/register.html'
+    success_url = reverse_lazy('login')  # Redirect to login on successful registration
+    success_message = "Registration successful. You can now log in."
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Registration failed. Please check your inputs.')  # Error message
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Additional logic if needed after successful registration
+        return response
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'member'
         return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        user = form.save()
-        #login(self.request, user)
-        return redirect('login')
   
     
 class RegisterManagementView(CreateView):
