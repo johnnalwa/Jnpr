@@ -54,27 +54,32 @@ def login(request):
         'form': form
     }
     return render(request, 'login.html', context)
+
 class LoginView(auth_views.LoginView):
     form_class = LoginForm
     template_name = 'login.html'
 
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
+    def form_invalid(self, form):
+        messages.error(self.request, 'Invalid username or password.')  # Display login error message
+        return super().form_invalid(form)
 
     def get_success_url(self):
         user = self.request.user
         if user.is_authenticated:
-            # Retrieve information about currently logged-in users
             users_info = get_logged_in_users()
             self.request.session['logged_in_users'] = users_info  # Store info in session
 
-            # Redirect users based on their roles
             if user.is_member:
+                messages.success(self.request, 'Welcome to the member dashboard.')
                 return reverse('member_dashboard')
             elif user.is_management:
+                messages.success(self.request, 'Welcome to the management dashboard.')
                 return reverse('management_dashboard')
-        else:
-            return reverse('login')
+        
+        # Redirect unauthenticated users to the login page with an error message
+        messages.error(self.request, 'You are not authenticated. Please log in.')
+        return reverse('login')
+        
 class RegisterMemberView(CreateView):
     model = User
     form_class = MemberSignUpForm
